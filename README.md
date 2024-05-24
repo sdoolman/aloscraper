@@ -71,6 +71,10 @@ You will then be prompted to enter your username and password.
 
 This project is licensed under the GPL-3.0 License - see the [LICENSE](LICENSE) file for details.
 
+## Attribution
+
+This project is inspired by and based on the work from [aloscraper](https://github.com/gatekeepr/aloscraper) by [gatekeepr](https://github.com/gatekeepr). Many thanks to the original author for the initial implementation and ideas.
+
 ## Acknowledgements
 
 - [Selenium](https://www.selenium.dev/)
