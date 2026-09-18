@@ -1,4 +1,10 @@
 import { aloClient } from '../aloClient';
+import {
+  extractBackground,
+  extractCategory,
+  extractCoaches,
+  extractPoster,
+} from '../utils/formatters';
 
 export async function metaHandler(args: { type: string; id: string }) {
   const match = args.id.match(/^alo:(?:plan_)?(\d+)$/);
@@ -12,52 +18,62 @@ export async function metaHandler(args: { type: string; id: string }) {
     aloClient.getPlanEntries(planId),
   ]);
 
-  const poster =
-    plan.cover_photo?.url ||
-    plan.banner_photo_url ||
-    plan.banner_photo_mobile_url;
+  const poster = extractPoster(plan);
+  const background = extractBackground(plan);
+  const category = extractCategory(plan);
+  const coaches = extractCoaches(plan);
 
   const genres: string[] = [];
-  if (plan.primary_category) genres.push(plan.primary_category);
+  if (category) genres.push(category);
   if (plan.difficulty_level) genres.push(plan.difficulty_level);
-  if (plan.coaches && plan.coaches.length > 0) {
-    for (const c of plan.coaches) {
-      if (c.user?.name) genres.push(c.user.name);
-    }
+  for (const coach of coaches) {
+    if (!genres.includes(coach)) genres.push(coach);
   }
 
   const videos = entries.map((entry, idx) => {
     const thumbnail =
       entry.video_thumbnail ||
+      entry.photo?.url ||
       entry.video?.thumbnail?.play?.url ||
       entry.video?.thumbnail?.url ||
-      entry.photo?.url ||
       poster;
 
     const runtimeMinutes = entry.duration_in_ms
       ? Math.round(entry.duration_in_ms / 60000)
       : undefined;
 
+    const released = (entry as any).created_at
+      ? new Date((entry as any).created_at).toISOString()
+      : undefined;
+
     return {
       id: `alo:entry_${entry.id}`,
-      title: entry.title,
+      title: entry.title || `Class ${idx + 1}`,
       season: 1,
       episode: idx + 1,
-      overview: entry.description || entry.preview_description,
+      overview: entry.description || entry.preview_description || '',
       thumbnail,
       runtime: runtimeMinutes,
+      released,
     };
   });
 
+  const releaseYear = plan.release_date
+    ? new Date(plan.release_date).getFullYear().toString()
+    : undefined;
+
   return {
     meta: {
-      id: args.id,
+      id: `alo:plan_${planId}`,
       type: 'series',
       name: plan.title,
       poster,
-      background: plan.banner_photo_url,
+      background,
       description: plan.description,
       genres,
+      cast: coaches.length > 0 ? coaches : undefined,
+      director: coaches.length > 0 ? coaches : undefined,
+      releaseInfo: releaseYear,
       videos,
     },
   };

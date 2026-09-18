@@ -10,12 +10,29 @@ interface StremioStream {
 }
 
 export async function streamHandler(args: { type: string; id: string }) {
-  const match = args.id.match(/^alo:(?:entry_)?(\d+)$/);
-  if (!match) {
+  let entryId: string | undefined;
+
+  // 1. Format: alo:entry_12345 or alo:entry_12345:1:1 or alo:12345
+  const entryMatch = args.id.match(/^alo:(?:entry_)?(\d+)(?::\d+:\d+)?$/);
+  if (entryMatch && !args.id.startsWith('alo:plan_')) {
+    entryId = entryMatch[1];
+  } else {
+    // 2. Format: alo:plan_615:1:1
+    const planMatch = args.id.match(/^alo:(?:plan_)?(\d+):(\d+):(\d+)$/);
+    if (planMatch) {
+      const planId = planMatch[1];
+      const episodeNum = parseInt(planMatch[3], 10);
+      const entries = await aloClient.getPlanEntries(planId);
+      if (entries && entries.length >= episodeNum && episodeNum > 0) {
+        entryId = String(entries[episodeNum - 1].id);
+      }
+    }
+  }
+
+  if (!entryId) {
     throw new Error(`Invalid Alo workout entry ID: ${args.id}`);
   }
 
-  const entryId = match[1];
   const entry = await aloClient.getPlanEntry(entryId);
 
   const streams: StremioStream[] = [];

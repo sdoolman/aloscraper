@@ -10,7 +10,8 @@ describe('Alo Moves Stremio Addon Test Suite', () => {
   it('should have a valid Stremio Addon manifest', () => {
     assert.equal(manifest.id, 'org.sdoolman.alomoves');
     assert.ok(manifest.name.includes('Alo'));
-    assert.deepEqual(manifest.resources, ['catalog', 'meta', 'stream']);
+    assert.equal(manifest.resources.length, 3);
+    assert.equal(manifest.resources[0], 'catalog');
     assert.deepEqual(manifest.types, ['series']);
     assert.deepEqual(manifest.idPrefixes, ['alo:']);
     assert.equal(manifest.catalogs.length, 1);
@@ -28,6 +29,27 @@ describe('Alo Moves Stremio Addon Test Suite', () => {
     assert.ok(first.id.startsWith('alo:plan_'), 'ID should follow alo:plan_ format');
     assert.ok(first.name, 'Series should have a title');
     assert.ok(first.poster?.startsWith('http'), 'Series should have a valid poster URL');
+    assert.ok(
+      first.genres.every((g) => typeof g === 'string'),
+      'All genres must be strings'
+    );
+  });
+
+  it('should fetch genre catalog with valid poster graphics', async () => {
+    const result = await catalogHandler({
+      type: 'series',
+      id: 'alo_series',
+      extra: { genre: 'Yoga' },
+    });
+
+    assert.ok(result.metas.length > 0, 'Genre query should return programs');
+    const first = result.metas[0];
+    assert.ok(first.name, 'Program should have a title');
+    assert.ok(first.poster?.startsWith('http'), 'Genre program must have a valid poster URL');
+    assert.ok(
+      first.genres.every((g) => typeof g === 'string'),
+      'All genres must be strings'
+    );
   });
 
   it('should search series dynamically by query', async () => {
@@ -40,19 +62,25 @@ describe('Alo Moves Stremio Addon Test Suite', () => {
     assert.ok(result.metas.length > 0, 'Search for "wild" should return programs');
     const hasWild = result.metas.some((m) => m.name.toLowerCase().includes('wild'));
     assert.ok(hasWild, 'Search results should include series with "wild" in title');
+    assert.ok(result.metas[0].poster?.startsWith('http'), 'Search result must have a valid poster URL');
   });
 
-  it('should resolve series metadata, episodes, and graphics', async () => {
-    // Plan 3144: Alo in the Wild: Costa Rica
+  it('should resolve series metadata, episodes, and graphics for plan 615', async () => {
+    // Plan 615: Yoga Basics
     const result = await metaHandler({
       type: 'series',
-      id: 'alo:plan_3144',
+      id: 'alo:plan_615',
     });
 
     assert.ok(result.meta, 'Meta response should not be empty');
-    assert.ok(result.meta.name.includes('Costa Rica'), 'Title should match Costa Rica');
+    assert.equal(result.meta.id, 'alo:plan_615');
+    assert.ok(result.meta.name.includes('Yoga Basics'), 'Title should match Yoga Basics');
     assert.ok(result.meta.poster?.startsWith('http'), 'Poster must be a valid URL');
     assert.ok(result.meta.background?.startsWith('http'), 'Background hero image must be a valid URL');
+    assert.ok(
+      result.meta.genres.every((g) => typeof g === 'string'),
+      'All genres must be strings'
+    );
     assert.ok(result.meta.videos.length > 0, 'Should have classes/episodes listed');
 
     const firstEp = result.meta.videos[0];

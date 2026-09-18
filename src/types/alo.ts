@@ -3,18 +3,40 @@ export interface AloPlan {
   title: string;
   slug?: string;
   description?: string;
-  cover_photo?: {
-    url?: string;
-  };
+  category?: string;
+  primary_category?:
+    | string
+    | {
+        id?: number;
+        title?: string;
+        name?: string;
+        slug?: string;
+      };
+  cover_photo?:
+    | {
+        url?: string;
+      }
+    | string;
+  thumbnail_image?: string;
+  banner_photo?: string;
   banner_photo_url?: string;
+  banner_photo_mobile?: string;
   banner_photo_mobile_url?: string;
   workout_count?: number;
+  classes_count?: number;
   difficulty_level?: string;
-  primary_category?: string;
-  coaches?: Array<{
-    user?: { name: string };
-    coachInfo?: { slug: string };
-  }>;
+  release_date?: string;
+  coaches?: Array<
+    | string
+    | {
+        first_name?: string;
+        last_name?: string;
+        name?: string;
+        user?: { name: string };
+        coach_info?: { slug: string; tag_line?: string };
+        coachInfo?: { slug: string };
+      }
+  >;
 }
 
 export interface AloPlanEntry {
