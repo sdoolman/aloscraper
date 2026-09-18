@@ -1,0 +1,92 @@
+import test, { describe, it } from 'node:test';
+import assert from 'node:assert/strict';
+import { manifest } from '../src/manifest';
+import { catalogHandler } from '../src/handlers/catalog';
+import { metaHandler } from '../src/handlers/meta';
+import { streamHandler } from '../src/handlers/stream';
+import { config } from '../src/config';
+
+describe('Alo Moves Stremio Addon Test Suite', () => {
+  it('should have a valid Stremio Addon manifest', () => {
+    assert.equal(manifest.id, 'org.sdoolman.alomoves');
+    assert.ok(manifest.name.includes('Alo'));
+    assert.deepEqual(manifest.resources, ['catalog', 'meta', 'stream']);
+    assert.deepEqual(manifest.types, ['series']);
+    assert.deepEqual(manifest.idPrefixes, ['alo:']);
+    assert.equal(manifest.catalogs.length, 1);
+    assert.equal(manifest.catalogs[0].id, 'alo_series');
+  });
+
+  it('should fetch featured programs in catalog handler', async () => {
+    const result = await catalogHandler({
+      type: 'series',
+      id: 'alo_series',
+    });
+
+    assert.ok(result.metas.length > 0, 'Catalog should return featured series');
+    const first = result.metas[0];
+    assert.ok(first.id.startsWith('alo:plan_'), 'ID should follow alo:plan_ format');
+    assert.ok(first.name, 'Series should have a title');
+    assert.ok(first.poster?.startsWith('http'), 'Series should have a valid poster URL');
+  });
+
+  it('should search series dynamically by query', async () => {
+    const result = await catalogHandler({
+      type: 'series',
+      id: 'alo_series',
+      extra: { search: 'wild' },
+    });
+
+    assert.ok(result.metas.length > 0, 'Search for "wild" should return programs');
+    const hasWild = result.metas.some((m) => m.name.toLowerCase().includes('wild'));
+    assert.ok(hasWild, 'Search results should include series with "wild" in title');
+  });
+
+  it('should resolve series metadata, episodes, and graphics', async () => {
+    // Plan 3144: Alo in the Wild: Costa Rica
+    const result = await metaHandler({
+      type: 'series',
+      id: 'alo:plan_3144',
+    });
+
+    assert.ok(result.meta, 'Meta response should not be empty');
+    assert.ok(result.meta.name.includes('Costa Rica'), 'Title should match Costa Rica');
+    assert.ok(result.meta.poster?.startsWith('http'), 'Poster must be a valid URL');
+    assert.ok(result.meta.background?.startsWith('http'), 'Background hero image must be a valid URL');
+    assert.ok(result.meta.videos.length > 0, 'Should have classes/episodes listed');
+
+    const firstEp = result.meta.videos[0];
+    assert.equal(firstEp.season, 1, 'Season should be 1');
+    assert.ok(firstEp.episode >= 1, 'Episode should be >= 1');
+    assert.ok(firstEp.id.startsWith('alo:entry_'), 'Episode ID should follow alo:entry_ format');
+    assert.ok(firstEp.thumbnail?.startsWith('http'), 'Episode must have a thumbnail image URL');
+  });
+
+  it('should resolve live video stream from BunnyCDN when authenticated', async (t) => {
+    if (!config.aloRememberToken) {
+      t.skip('Skipping live stream resolution test: ALO_REMEMBER_TOKEN not set');
+      return;
+    }
+
+    // Class 14529: 5-Minute Back Core
+    const result = await streamHandler({
+      type: 'series',
+      id: 'alo:entry_14529',
+    });
+
+    assert.ok(result.streams.length > 0, 'Should return at least 1 stream');
+    const hls = result.streams.find((s) => s.url.includes('.m3u8'));
+    assert.ok(hls, 'Should have an adaptive HLS stream');
+    assert.ok(hls.url.includes('video-cdn.alomoves.com'), 'Stream must come from Alo video-cdn');
+
+    // Live HTTP check against BunnyCDN
+    const cdnCheck = await fetch(hls.url, {
+      method: 'GET',
+      headers: { Range: 'bytes=0-100' },
+    });
+    assert.ok(
+      cdnCheck.status === 200 || cdnCheck.status === 206,
+      `BunnyCDN should return HTTP 200/206, got ${cdnCheck.status}`
+    );
+  });
+});

@@ -1,0 +1,30 @@
+{
+  "name": "alomoves-stremio",
+  "version": "1.0.0",
+  "description": "Stremio Addon for Alo Moves / Alo Wellness Club series on-demand streaming",
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "tsc",
+    "start": "node dist/index.js",
+    "dev": "tsx watch src/index.ts",
+    "test": "tsx --test test/**/*.test.ts"
+  },
+  "keywords": [
+    "stremio",
+    "stremio-addon",
+    "alomoves",
+    "yoga",
+    "fitness"
+  ],
+  "author": "sdoolman",
+  "license": "MIT",
+  "dependencies": {
+    "dotenv": "^16.4.7",
+    "stremio-addon-sdk": "^1.6.10"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.7",
+    "tsx": "^4.19.2",
+    "typescript": "^5.7.3"
+  }
+}
