@@ -2,6 +2,7 @@ import { config } from './config';
 import {
   AloPlan,
   AloPlanEntry,
+  AloPlanEntriesResponse,
   AloProgramFinderData,
   AloSearchResponse,
 } from './types/alo';
@@ -69,7 +70,9 @@ class AloClient {
     return (await res.json()) as AloPlan;
   }
 
-  async getPlanEntries(planId: string | number): Promise<AloPlanEntry[]> {
+  async getPlanEntries(
+    planId: string | number
+  ): Promise<AloPlanEntry[] | AloPlanEntriesResponse> {
     const res = await fetch(`${this.baseUrl}/plans/${planId}/plan_entries`, {
       headers: this.getHeaders(false),
     });
@@ -78,7 +81,7 @@ class AloClient {
         `Failed to fetch entries for plan ${planId}: HTTP ${res.status}`
       );
     }
-    return (await res.json()) as AloPlanEntry[];
+    return (await res.json()) as AloPlanEntry[] | AloPlanEntriesResponse;
   }
 
   async getPlanEntry(entryId: string | number): Promise<AloPlanEntry> {

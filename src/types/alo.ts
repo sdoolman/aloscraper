@@ -83,3 +83,19 @@ export interface AloSearchResponse {
   result_count: number;
   top: AloPlan[];
 }
+
+export interface AloStructuredSection {
+  title?: string;
+  description?: string;
+  items?: Array<{
+    item_type?: string;
+    item_tag?: string;
+    description?: string;
+    item?: AloPlanEntry;
+  }>;
+}
+
+export interface AloPlanEntriesResponse {
+  sections?: AloStructuredSection[];
+}
+

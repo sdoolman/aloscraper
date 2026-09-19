@@ -21,10 +21,18 @@ export async function streamHandler(args: { type: string; id: string }) {
     const planMatch = args.id.match(/^alo:(?:plan_)?(\d+):(\d+):(\d+)$/);
     if (planMatch) {
       const planId = planMatch[1];
+      const seasonNum = parseInt(planMatch[2], 10);
       const episodeNum = parseInt(planMatch[3], 10);
       const entries = await aloClient.getPlanEntries(planId);
-      if (entries && entries.length >= episodeNum && episodeNum > 0) {
+      if (Array.isArray(entries) && entries.length >= episodeNum && episodeNum > 0) {
         entryId = String(entries[episodeNum - 1].id);
+      } else if (entries && Array.isArray((entries as any).sections)) {
+        const section = (entries as any).sections[seasonNum - 1];
+        if (section && Array.isArray(section.items)) {
+          const it = section.items[episodeNum - 1];
+          const e = it?.item || it;
+          if (e && e.id) entryId = String(e.id);
+        }
       }
     }
   }

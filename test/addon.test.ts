@@ -93,6 +93,22 @@ describe('Alo Moves Stremio Addon Test Suite', () => {
     assert.ok(firstEp.thumbnail?.startsWith('http'), 'Episode must have a thumbnail image URL');
   });
 
+  it('should resolve structured multi-week programs into seasons (e.g. plan 3393)', async () => {
+    // Plan 3393: Ready, Set, Run (5-week structured program)
+    const result = await metaHandler({
+      type: 'series',
+      id: 'alo:plan_3393',
+    });
+
+    assert.ok(result.meta, 'Meta response should not be empty');
+    assert.equal(result.meta.id, 'alo:plan_3393');
+    assert.ok(result.meta.name.includes('Ready, Set, Run'));
+    assert.ok(result.meta.videos.length >= 10, 'Structured plan should have multiple classes');
+    const seasons = [...new Set(result.meta.videos.map((v) => v.season))];
+    assert.ok(seasons.length > 1, 'Structured series should map sections to multiple seasons');
+    assert.ok(result.meta.videos[0].title.includes('Run 1'), 'Title should include item_tag');
+  });
+
   it('should resolve live video stream from BunnyCDN when authenticated', async (t) => {
     if (!config.aloRememberToken) {
       t.skip('Skipping live stream resolution test: ALO_REMEMBER_TOKEN not set');
