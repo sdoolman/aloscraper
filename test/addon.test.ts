@@ -7,25 +7,26 @@ import { streamHandler } from '../src/handlers/stream';
 import { config } from '../src/config';
 
 describe('Alo Moves Stremio Addon Test Suite', () => {
-  it('should have a valid Stremio Addon manifest', () => {
+  it('should have a valid Stremio Addon manifest with 11 catalogs', () => {
     assert.equal(manifest.id, 'org.sdoolman.alomoves');
     assert.ok(manifest.name.includes('Alo'));
     assert.equal(manifest.resources.length, 3);
     assert.equal(manifest.resources[0], 'catalog');
     assert.deepEqual(manifest.types, ['series']);
     assert.deepEqual(manifest.idPrefixes, ['alo:']);
-    assert.equal(manifest.catalogs.length, 1);
-    assert.equal(manifest.catalogs[0].id, 'alo_series');
+    assert.equal(manifest.catalogs.length, 11);
+    assert.equal(manifest.catalogs[0].id, 'alo_yoga');
     assert.equal((manifest.catalogs[0] as any).posterShape, 'landscape');
   });
 
-  it('should fetch featured programs in catalog handler', async () => {
+  it('should fetch yoga catalog with subcategories', async () => {
     const result = await catalogHandler({
       type: 'series',
-      id: 'alo_series',
+      id: 'alo_yoga',
+      extra: { genre: 'Vinyasa' },
     });
 
-    assert.ok(result.metas.length > 0, 'Catalog should return featured series');
+    assert.ok(result.metas.length > 0, 'Catalog should return Vinyasa series');
     const first = result.metas[0];
     assert.ok(first.id.startsWith('alo:plan_'), 'ID should follow alo:plan_ format');
     assert.ok(first.name, 'Series should have a title');
@@ -37,17 +38,18 @@ describe('Alo Moves Stremio Addon Test Suite', () => {
     );
   });
 
-  it('should fetch genre catalog with valid poster graphics', async () => {
+  it('should fetch fitness catalog with subcategories', async () => {
     const result = await catalogHandler({
       type: 'series',
-      id: 'alo_series',
-      extra: { genre: 'Yoga' },
+      id: 'alo_fitness',
+      extra: { genre: 'HIIT' },
     });
 
     assert.ok(result.metas.length > 0, 'Genre query should return programs');
     const first = result.metas[0];
     assert.ok(first.name, 'Program should have a title');
     assert.ok(first.poster?.startsWith('http'), 'Genre program must have a valid poster URL');
+    assert.equal((first as any).posterShape, 'landscape');
     assert.ok(
       first.genres.every((g) => typeof g === 'string'),
       'All genres must be strings'
