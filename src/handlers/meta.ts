@@ -4,6 +4,7 @@ import {
   extractCategory,
   extractCoaches,
   extractPoster,
+  formatDuration,
 } from '../utils/formatters';
 
 export async function metaHandler(args: { type: string; id: string }) {
@@ -42,13 +43,19 @@ export async function metaHandler(args: { type: string; id: string }) {
       ? Math.round(entry.duration_in_ms / 60000)
       : undefined;
 
+    const durationStr = formatDuration(entry.duration_in_ms, entry.human_duration);
+    const baseTitle = entry.title || `Class ${idx + 1}`;
+    // Append (XX min) if duration is available and not already in the title
+    const hasDurationInTitle = /\(\s*\d+\s*(?:min|m)\s*\)/i.test(baseTitle);
+    const title = durationStr && !hasDurationInTitle ? `${baseTitle} (${durationStr})` : baseTitle;
+
     const released = (entry as any).created_at
       ? new Date((entry as any).created_at).toISOString()
       : undefined;
 
     return {
       id: `alo:entry_${entry.id}`,
-      title: entry.title || `Class ${idx + 1}`,
+      title,
       season: 1,
       episode: idx + 1,
       overview: entry.description || entry.preview_description || '',

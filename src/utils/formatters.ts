@@ -65,3 +65,25 @@ export function extractBackground(plan: AloPlan): string | undefined {
   }
   return extractPoster(plan);
 }
+
+export function formatDuration(durationInMs?: number, humanDuration?: string): string | undefined {
+  if (humanDuration) {
+    const parts = humanDuration.split(':').map((p) => parseInt(p, 10));
+    if (parts.length === 2 && !parts.some(isNaN)) {
+      const minutes = parts[0];
+      return minutes > 0 ? `${minutes} min` : '< 1 min';
+    } else if (parts.length === 3 && !parts.some(isNaN)) {
+      const hours = parts[0];
+      const minutes = parts[1];
+      return hours > 0 ? `${hours}h ${minutes}m` : `${minutes} min`;
+    }
+  }
+
+  if (durationInMs && durationInMs > 0) {
+    const min = Math.round(durationInMs / 60000);
+    return min > 0 ? `${min} min` : '< 1 min';
+  }
+
+  return undefined;
+}
+
