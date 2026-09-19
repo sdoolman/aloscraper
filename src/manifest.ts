@@ -1,6 +1,6 @@
 export const manifest = {
   id: 'org.sdoolman.alomoves',
-  version: '1.1.0',
+  version: '1.1.1',
   name: 'Alo Wellness Club',
   description:
     'Stream Alo Moves and Alo Wellness Club fitness, yoga, and mindfulness programs directly in Stremio.',
@@ -25,7 +25,7 @@ export const manifest = {
     {
       type: 'series',
       id: 'alo_yoga',
-      name: 'Alo Moves - Yoga',
+      name: 'ALO MOVES | Yoga',
       posterShape: 'landscape',
       extra: [
         { name: 'search', isRequired: false },
@@ -48,7 +48,7 @@ export const manifest = {
     {
       type: 'series',
       id: 'alo_fitness',
-      name: 'Alo Moves - Fitness',
+      name: 'ALO MOVES | Fitness',
       posterShape: 'landscape',
       extra: [
         { name: 'search', isRequired: false },
@@ -77,7 +77,7 @@ export const manifest = {
     {
       type: 'series',
       id: 'alo_mindfulness',
-      name: 'Alo Moves - Mindfulness',
+      name: 'ALO MOVES | Mindfulness',
       posterShape: 'landscape',
       extra: [
         { name: 'search', isRequired: false },
@@ -99,7 +99,7 @@ export const manifest = {
     {
       type: 'series',
       id: 'alo_wellness',
-      name: 'Alo Moves - Wellness',
+      name: 'ALO MOVES | Wellness',
       posterShape: 'landscape',
       extra: [
         { name: 'search', isRequired: false },
@@ -122,7 +122,7 @@ export const manifest = {
     {
       type: 'series',
       id: 'alo_skills',
-      name: 'Alo Moves - Skills',
+      name: 'ALO MOVES | Skills',
       posterShape: 'landscape',
       extra: [
         { name: 'search', isRequired: false },
@@ -146,7 +146,7 @@ export const manifest = {
     {
       type: 'series',
       id: 'alo_duration',
-      name: 'Alo Moves - Duration',
+      name: 'ALO MOVES | Duration',
       posterShape: 'landscape',
       extra: [
         { name: 'search', isRequired: false },
@@ -167,7 +167,7 @@ export const manifest = {
     {
       type: 'series',
       id: 'alo_focus',
-      name: 'Alo Moves - Focus Area',
+      name: 'ALO MOVES | Focus Area',
       posterShape: 'landscape',
       extra: [
         { name: 'search', isRequired: false },
@@ -191,7 +191,7 @@ export const manifest = {
     {
       type: 'series',
       id: 'alo_equipment',
-      name: 'Alo Moves - Equipment',
+      name: 'ALO MOVES | Equipment',
       posterShape: 'landscape',
       extra: [
         { name: 'search', isRequired: false },
@@ -217,7 +217,7 @@ export const manifest = {
     {
       type: 'series',
       id: 'alo_difficulty',
-      name: 'Alo Moves - Difficulty',
+      name: 'ALO MOVES | Difficulty',
       posterShape: 'landscape',
       extra: [
         { name: 'search', isRequired: false },
@@ -232,7 +232,7 @@ export const manifest = {
     {
       type: 'series',
       id: 'alo_intensity',
-      name: 'Alo Moves - Intensity',
+      name: 'ALO MOVES | Intensity',
       posterShape: 'landscape',
       extra: [
         { name: 'search', isRequired: false },
@@ -247,7 +247,7 @@ export const manifest = {
     {
       type: 'series',
       id: 'alo_instructors',
-      name: 'Alo Moves - Instructors',
+      name: 'ALO MOVES | Instructors',
       posterShape: 'landscape',
       extra: [
         { name: 'search', isRequired: false },
