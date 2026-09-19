@@ -75,6 +75,7 @@ export async function metaHandler(args: { type: string; id: string }) {
       type: 'series',
       name: plan.title,
       poster,
+      posterShape: 'landscape',
       background,
       description: plan.description,
       genres,

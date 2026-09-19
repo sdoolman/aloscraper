@@ -1,6 +1,6 @@
 export const manifest = {
   id: 'org.sdoolman.alomoves',
-  version: '1.0.1',
+  version: '1.0.2',
   name: 'Alo Wellness Club',
   description:
     'Stream Alo Moves and Alo Wellness Club fitness, yoga, and mindfulness programs directly in Stremio.',
@@ -26,6 +26,7 @@ export const manifest = {
       type: 'series',
       id: 'alo_series',
       name: 'Alo Moves',
+      posterShape: 'landscape',
       extra: [
         { name: 'search', isRequired: false },
         {

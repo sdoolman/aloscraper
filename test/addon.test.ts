@@ -16,6 +16,7 @@ describe('Alo Moves Stremio Addon Test Suite', () => {
     assert.deepEqual(manifest.idPrefixes, ['alo:']);
     assert.equal(manifest.catalogs.length, 1);
     assert.equal(manifest.catalogs[0].id, 'alo_series');
+    assert.equal((manifest.catalogs[0] as any).posterShape, 'landscape');
   });
 
   it('should fetch featured programs in catalog handler', async () => {
@@ -29,6 +30,7 @@ describe('Alo Moves Stremio Addon Test Suite', () => {
     assert.ok(first.id.startsWith('alo:plan_'), 'ID should follow alo:plan_ format');
     assert.ok(first.name, 'Series should have a title');
     assert.ok(first.poster?.startsWith('http'), 'Series should have a valid poster URL');
+    assert.equal((first as any).posterShape, 'landscape');
     assert.ok(
       first.genres.every((g) => typeof g === 'string'),
       'All genres must be strings'
@@ -75,6 +77,7 @@ describe('Alo Moves Stremio Addon Test Suite', () => {
     assert.ok(result.meta, 'Meta response should not be empty');
     assert.equal(result.meta.id, 'alo:plan_615');
     assert.ok(result.meta.name.includes('Yoga Basics'), 'Title should match Yoga Basics');
+    assert.equal((result.meta as any).posterShape, 'landscape');
     assert.ok(result.meta.poster?.startsWith('http'), 'Poster must be a valid URL');
     assert.ok(result.meta.background?.startsWith('http'), 'Background hero image must be a valid URL');
     assert.ok(

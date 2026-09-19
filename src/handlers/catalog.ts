@@ -46,6 +46,7 @@ export async function catalogHandler(args: {
       type: 'series',
       name: plan.title,
       poster,
+      posterShape: 'landscape',
       background,
       description,
       genres,
